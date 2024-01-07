@@ -1,4 +1,4 @@
-const valueRegex = /^\s*([a-zA-Z0-9_]*):\s([a-zA-Z0-9/\-:\._ \\{"]*)$/;
+const valueRegex = /^\s*([a-zA-Z0-9_]*):\s([a-zA-Z0-9/\-:._ \\{"]*)$/;
 const objectRegex = /^\s*([a-zA-Z0-9_]*)\s{$/;
 const supportedTypes = [
     "string",
@@ -10,226 +10,95 @@ const supportedTypes = [
     "tree"
 ];
 
-class DefTreeNodes {
-    #nodes = [];
-
-    constructor() {
-        this.#nodes = [];
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    getNodes() {
-        return this.#nodes;
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    addNode(node) {
-        this.#nodes.push(node);
-        return this.#nodes;
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    addNodes(nodes) {
-        this.#nodes.push(...nodes);
-        return this.#nodes;
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    removeNode(node) {
-        this.#nodes.splice(this.#nodes.indexOf(node), 1);
-        return this.#nodes;
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    findByKey(key) {
-        return this.#findBy("key", key);
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    findByType(type) {
-        return this.#findBy("type", type);
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    findByValue(value) {
-        return this.#findBy("value", value);
-    }
-
-    /**
-     * @returns {DefTreeNode} 
-     */
-    findFirstByKey(key) {
-        return this.#findFirstBy("key", key);
-    }
-
-    /**
-     * @returns {DefTreeNode} 
-     */
-    indFirstByType(type) {
-        return this.#findFirstBy("type", type);
-    }
-
-    /**
-     * @returns {DefTreeNode} 
-     */
-    indFirstByValue(value) {
-        return this.#findFirstBy("value", value);
-    }
-
-    /**
-     * @returns {DefTreeNode}
-     */
-    #findFirstBy(field, value) {
-        const nodes = this.#findBy(field, value).getNodes();
-        if (nodes.getNodes().length === 0) {
-            throw new Error(`No mathces in node, find by '${field}' equals to '${value}'`);
-        }
-        return nodes[0];
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    #findBy(field, value) {
-        const nodes = new DefTreeNodes();
-        const filtered = this.getNodes().filter((x) => {
-            let valueToFilter;
-            switch (field) {
-                case "key": valueToFilter = x.getKey(); break;
-                case "type": valueToFilter = x.getType(); break;
-                case "value": valueToFilter = x.getValue(); break;
-                default: throw new Error(`Unknown field to filter: '${field}'`);
-
-            }
-            return valueToFilter === value;
-        });
-        nodes.addNodes(filtered);
-        return nodes;
-    }
-}
-
 class DefTreeNode {
-    #key = "";
-    #type = "";
-    #value = null;
-    #nodes = new DefTreeNodes();
+    /**
+     * @type {string}
+     * @private
+     */
+    _key;
+    /**
+     * @type {string}
+     * @private
+     */
+    _type;
+    /**
+     * @type {string|number|boolean|DefTreeNode}
+     * @private
+     */
+    _value;
+    /**
+     * @type {Array.<DefTreeNode>}
+     * @private
+     */
+    _nodes;
 
     constructor(key, type, value) {
-        this.#key = key;
-        this.#type = type;
-        this.#value = value;
+        this._key = key;
+        this._type = type;
+        this._value = value;
+        this._nodes = [];
     }
 
     /**
-     * @returns {String} 
+     * @returns {string} The current key of node
      */
     getKey() {
-        return this.#key;
+        return this._key;
     }
 
     /**
-     * @param {String} key 
+     * @param {string} key The new key to apply to node
      */
     setKey(key) {
-        this.#key = key;
+        this._key = key;
     }
 
     /**
-     * @returns {String} 
+     * @returns {string} The current type of node
      */
     getType() {
-        return this.#type;
+        return this._type;
     }
 
     /**
-     * @param {String} type 
+     * @param {string} type The new type to apply to node
      */
     setType(type) {
         if (!supportedTypes.includes(type)) {
             throw new Error(`Not supported node type: '${type}'`);
         }
-        this.#type = type;
+        this._type = type;
     }
 
     /**
-     * @returns {String|Number|Boolean|DefTreeNode} 
+     * @returns {string|number|boolean|DefTreeNode} The current value of node
      */
     getValue() {
-        return this.#type === "tree" ? this.#nodes : this.#value;
+        return this._type === "tree" ? this._nodes : this._value;
     }
 
     /**
-     * @param {String|Number|Boolean|DefTreeNode} value 
+     * @param {string|number|boolean|DefTreeNode} value The new value to apply to node
      */
     setValue(value) {
         // TODO: add type checking for provided value
-        this.#value = value;
+        this._value = value;
     }
 
     /**
-     * @returns {Array.<DefTreeNode>} 
+     * @returns {Array.<DefTreeNode>} Children nodes of the node
      */
     getNodes() {
-        return this.#nodes.getNodes();
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    addNode(node) {
-        return this.#nodes.addNode(node);
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    addNodes(nodes) {
-        return this.#nodes.addNodes(nodes);
-    }
-
-    /**
-     * @returns {Array.<DefTreeNode>} 
-     */
-    removeNode(node) {
-        return this.#nodes.removeNode(node);
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    findByKey(key) {
-        return this.#nodes.findByKey(key);
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    findByType(type) {
-        return this.#nodes.findByType(type);
-    }
-
-    /**
-     * @returns {DefTreeNodes} 
-     */
-    findByValue(value) {
-        return this.#nodes.findByValue(value);
+        return this._nodes;
     }
 }
 
+/**
+ * @param {DefTreeNode} tree Tree to serialize
+ * @param {number} level Level of offset, actually tab offset
+ * @param {boolean} isRoot Is the tree is root tree
+ * @returns {string} Serialized tree
+ */
 function _serializeTree(tree, level, isRoot) {
     let serialized = "";
     for (const node of tree.getNodes()) {
@@ -238,11 +107,17 @@ function _serializeTree(tree, level, isRoot) {
     return serialized;
 }
 
+/**
+ * @param {DefTreeNode} node Node to serialize
+ * @param {number} level Level of offset, actually tab offset
+ * @param {boolean} isRoot Is the node is root
+ * @returns {string} Serialized node
+ */
 function _serializeNode(node, level, isRoot) {
     if (node.getType() === "tree") {
         let serialized = _serializeTree(node, 0, false);
-        serialized = serialized.replaceAll(/(?<!\\)(\\\")/g, "\\\\\\\"");
-        serialized = serialized.replaceAll(/(?<!\\)(\")/g, "\\\"");
+        serialized = serialized.replaceAll(/(?<!\\)(\\")/g, "\\\\\\\"");
+        serialized = serialized.replaceAll(/(?<!\\)(")/g, "\\\"");
         serialized = serialized.replaceAll(/(?<!\\)(\\n)/g, "\\\\n");
         serialized = serialized.replaceAll(/(?<!n)(\n)/g, "\\n\n");
         if (isRoot) {
@@ -256,7 +131,7 @@ function _serializeNode(node, level, isRoot) {
             }
             serialized = lines.join("\n");
         }
-        serialized = `${"  ".repeat(level)}` + `${node.getKey()}: \"` + serialized;
+        serialized = `${"  ".repeat(level)}` + `${node.getKey()}: "` + serialized;
         serialized = serialized + (isRoot ? "\n" : "\"\n");
         return serialized;
     } else if (node.getType() === "object") {
@@ -266,6 +141,11 @@ function _serializeNode(node, level, isRoot) {
     }
 }
 
+/**
+ * @param {DefTreeNode} node Value node to serialize
+ * @param {number} level Level of offset, actually tab offset
+ * @returns {string} Serialized value node
+ */
 function _serializeValueNode(node, level) {
     if (node.getType() === "float" || node.getType() === "int") {
         return `${"  ".repeat(level)}${node.getKey()}: ${node.getType() === "int" ? node.getValue() : (node.getValue() % 1 === 0 ? node.getValue() + ".0" : node.getValue())}\n`;
@@ -276,6 +156,12 @@ function _serializeValueNode(node, level) {
     }
 }
 
+/**
+ * @param {DefTreeNode} node Object to serialize
+ * @param {number} level Level of offset, actually tab offset
+ * @param {boolean} isRoot Is the node is root
+ * @returns {string} Serialized object node
+ */
 function _serializeObjectNode(node, level, isRoot) {
     let serialized = "";
     serialized += `${"  ".repeat(level)}${node.getKey()} {\n`;
@@ -286,6 +172,11 @@ function _serializeObjectNode(node, level, isRoot) {
     return serialized;
 }
 
+/**
+ * @param {string} content Content to deserialize
+ * @param {string} key How to name tree
+ * @returns {DefTreeNode} Node of deserialized trees
+ */
 function _deserializeTree(content, key = "root") {
     const node = new DefTreeNode(key, "tree", null);
     const lines = content.split(/\r?\n/);
@@ -295,6 +186,12 @@ function _deserializeTree(content, key = "root") {
     return node;
 }
 
+/**
+ * @param {DefTreeNode} parent Parent which will own parsed node
+ * @param {number} lineIndex Line index to deserialize from
+ * @param {Array.<string>} lines Array of strings to deserialize
+ * @returns {number} Amount of deserialize lines
+ */
 function _deserializeNode(parent, lineIndex, lines) {
     let parsedLines = 1;
     const line = lines[lineIndex];
@@ -303,20 +200,22 @@ function _deserializeNode(parent, lineIndex, lines) {
     }
     if (_isValue(line)) {
         const match = valueRegex.exec(line);
+        // eslint-disable-next-line no-unused-vars
         const [_, key, value] = match;
         if (_isSubTreeValue(value)) {
             const subTreeRaw = _getSubTreeRaw(lineIndex, lines);
-            parent.addNode(_deserializeTree(subTreeRaw.content, key));
+            parent.getNodes().push(_deserializeTree(subTreeRaw.content, key));
             parsedLines += subTreeRaw.parsedLines - 1;
         } else {
             const node = new DefTreeNode(key, "value", value);
-            parent.addNode(_strictTypesForNode(node));
+            parent.getNodes().push(_strictTypesForNode(node));
         }
     } else if (_isObjectStart(line)) {
         const match = objectRegex.exec(line);
+        // eslint-disable-next-line no-unused-vars
         const [_, key] = match;
         const node = new DefTreeNode(key, "object", null);
-        parent.addNode(node);
+        parent.getNodes().push(node);
         while (!_isObjectEnd(lines[lineIndex + parsedLines])) {
             parsedLines += _deserializeNode(node, lineIndex + parsedLines, lines);
         }
@@ -327,6 +226,10 @@ function _deserializeNode(parent, lineIndex, lines) {
     return parsedLines;
 }
 
+/**
+ * @param {DefTreeNode} node Node to strict
+ * @returns {DefTreeNode} Returns provided, but stricted node
+ */
 function _strictTypesForNode(node) {
     if (isNaN(node.getValue())) {
         if (node.getValue() === "true" || node.getValue() === "false") {
@@ -350,13 +253,21 @@ function _strictTypesForNode(node) {
     return node;
 }
 
+/**
+ * @param {string} line Line to check
+ * @returns {boolean} Returns true if the line has value pattern
+ */
 function _isValue(line) {
     return valueRegex.test(line);
 }
 
-function _isSubTreeValue(value) {
-    if (value.startsWith("\"") && value.endsWith("\"")) {
-        let valueNoQuotes = value.substring(1, value.length - 1);
+/**
+ * @param {string} line Line to check
+ * @returns {boolean} Returns true if the line is start of a sub-tree
+ */
+function _isSubTreeValue(line) {
+    if (line.startsWith("\"") && line.endsWith("\"")) {
+        let valueNoQuotes = line.substring(1, line.length - 1);
         valueNoQuotes = valueNoQuotes.replaceAll(/(\\+n)/g, "");
         valueNoQuotes = valueNoQuotes.replaceAll(/(\\+")/g, "");
         return _isValue(valueNoQuotes) || _isObjectStart(valueNoQuotes);
@@ -364,18 +275,34 @@ function _isSubTreeValue(value) {
     return false;
 }
 
+/**
+ * @param {string} line Line to check
+ * @returns {boolean} Returns true if the line is the end of a sub-tree
+ */
 function _isSubTreeEnd(line) {
     return line.trim() === "\"\"";
 }
 
+/**
+ * @param {string} line Line to check
+ * @returns {boolean} Returns true if the line is the start of the object
+ */
 function _isObjectStart(line) {
     return objectRegex.test(line);
 }
 
+/**
+ * @param {string} line Line to check
+ * @returns {boolean} Returns true if the line is the end of object
+ */
 function _isObjectEnd(line) {
     return line.endsWith("}");
 }
 
+/**
+ * @param {string} line The line where to find
+ * @returns {number} The index of found quoute starts from the left of the line
+ */
 function _getFirstQuotesIndex(line) {
     for (let i = 0; i < line.length; i++) {
         if (line[i] === "\"") {
@@ -385,6 +312,10 @@ function _getFirstQuotesIndex(line) {
     return -1;
 }
 
+/**
+ * @param {string} line The line where to find
+ * @returns {number} The index of found quoute starts from the right of the line
+ */
 function _getLastQuotesIndex(line) {
     for (let i = line.length - 1; i >= 0; i--) {
         if (line[i] === "\"") {
@@ -394,6 +325,12 @@ function _getLastQuotesIndex(line) {
     return -1;
 }
 
+/**
+ * @param {number} lineIndex Line index to read from
+ * @param {Array.<string>} lines Array of strings of defold sub-tree
+ * @returns {object} Return the parsed subtree, has two fields the one
+ * is amount of processed lines and the second is actually subtree
+ */
 function _getSubTreeRaw(lineIndex, lines) {
     let parsedLines = 0;
     let content = "";
@@ -409,7 +346,7 @@ function _getSubTreeRaw(lineIndex, lines) {
     }
     content = content.replaceAll(/(?<!\\)(\\\\n\n)/g, "\"\n\"");
     content = content.replaceAll(/(?<!\\)(\\n)/g, "");
-    content = content.replaceAll(/(?<!\\)(\\\")/g, "\"");
+    content = content.replaceAll(/(?<!\\)(\\")/g, "\"");
     content = content.replaceAll(/(?<!\\)(\\\\\\")/g, "\\\"");
     if (content.endsWith("\n")) {
         content = content.substring(0, content.length - 1);
@@ -421,16 +358,16 @@ function _getSubTreeRaw(lineIndex, lines) {
 }
 
 /**
- * @param {DefTreeNode} tree 
- * @returns {String}
+ * @param {DefTreeNode} tree The defold tree to serialize
+ * @returns {string} The serialized defold tree
  */
 function serialize(tree) {
     return _serializeTree(tree, 0, true);
 }
 
 /**
- * @param {String} content 
- * @returns {DefTreeNode}
+ * @param {string} content The defold file content to deserialize
+ * @returns {DefTreeNode} The root node of deserialized tree
  */
 function deserialize(content) {
     return _deserializeTree(content);

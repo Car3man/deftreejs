@@ -12,7 +12,10 @@ const {serialize, deserialize} = require("deftreejs");          // require metho
 const documentPath = "./main.collection";                       // define path for document to read
 const document = readFileSync(documentPath, "utf-8");           // reading the document
 const tree = deserialize(document);                             // parse the defold document
-tree.findByKey("name").getNodes().at(0).setValue("newName");    // find node by key equals "name" and change it value to "newName"
+tree.getNodes()
+    .filter((node) => node.getKey() === "name")
+    .at(0)
+    .setValue("newName");                                       // find node by key equals "name" and change it value to "newName"
 const serialized = serialize(tree);                             // serialize the modified tree
 writeFileSync(documentPath, serialized);                        // write it to document file
 ```
@@ -24,9 +27,3 @@ writeFileSync(documentPath, serialized);                        // write it to d
 - getValue() -> string|number|boolean|node
 - setValue(string|number|boolean|node)
 - getNodes() -> node[]
-- addNode(node)
-- addNodes(node[])
-- removeNode(node)
-- findByKey(string) -> nodes
-- findByType(string) -> nodes
-- findByValue(string) -> nodes

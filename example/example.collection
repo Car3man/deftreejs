@@ -1,0 +1,13 @@
+name: "Hello"
+myObject {
+    name: "I am a super object"
+    age: 20
+}
+myObject {
+    name: "Skuf"
+    age: 27
+}
+myObject {
+    name: "Just usual object"
+    age: 24
+}

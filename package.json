@@ -4,8 +4,13 @@
   "description": "Small library to parse Defold files",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint index.js",
+    "example": "node ./example/example.js"
   },
   "author": "Arthur Klopov",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-plugin-jsdoc": "^48.0.2"
+  }
 }
