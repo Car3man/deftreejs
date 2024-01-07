@@ -3,7 +3,7 @@ Small library to parse Defold files
 ## Install
 Deftree requires Node.js to use it
 ```sh
-npm i git+https://https://github.com/Car3man/deftreejs.git
+npm i git+https://github.com/Car3man/deftreejs.git
 ```
 ## Usage
 ```js
