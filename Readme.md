@@ -1,5 +1,5 @@
 # DefTreeJS
-Small library to parse Defold files
+Small library to serialize/deserialize Defold files
 ## Install
 Deftree requires Node.js to use it
 ```sh
