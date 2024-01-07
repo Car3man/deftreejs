@@ -70,6 +70,38 @@ class DefTreeNodes {
     }
 
     /**
+     * @returns {DefTreeNode} 
+     */
+    findFirstByKey(key) {
+        return this.#findFirstBy("key", key);
+    }
+
+    /**
+     * @returns {DefTreeNode} 
+     */
+    indFirstByType(type) {
+        return this.#findFirstBy("type", type);
+    }
+
+    /**
+     * @returns {DefTreeNode} 
+     */
+    indFirstByValue(value) {
+        return this.#findFirstBy("value", value);
+    }
+
+    /**
+     * @returns {DefTreeNode}
+     */
+    #findFirstBy(field, value) {
+        const nodes = this.#findBy(field, value).getNodes();
+        if (nodes.getNodes().length === 0) {
+            throw new Error(`No mathces in node, find by '${field}' equals to '${value}'`);
+        }
+        return nodes[0];
+    }
+
+    /**
      * @returns {DefTreeNodes} 
      */
     #findBy(field, value) {
