@@ -1,6 +1,6 @@
 {
   "name": "deftreejs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Small library to parse Defold files",
   "main": "index.js",
   "scripts": {
