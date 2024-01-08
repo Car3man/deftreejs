@@ -13,8 +13,7 @@ const documentPath = "./main.collection";                       // define path f
 const document = readFileSync(documentPath, "utf-8");           // reading the document
 const tree = deserialize(document);                             // parse the defold document
 tree.getNodes()
-    .filter((node) => node.getKey() === "name")
-    .at(0)
+    .find((node) => node.getKey() === "name")
     .setValue("newName");                                       // find node by key equals "name" and change it value to "newName"
 const serialized = serialize(tree);                             // serialize the modified tree
 writeFileSync(documentPath, serialized);                        // write it to document file
