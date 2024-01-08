@@ -1,4 +1,3 @@
-name: "Hello"
 myObject {
     name: "I am a super object"
     age: 20
