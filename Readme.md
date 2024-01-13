@@ -1,7 +1,7 @@
 # DefTreeJS
-Small library to serialize/deserialize Defold files
+The nodejs module to serialize/deserialize Defold files
 ## Install
-Deftree requires Node.js to use it
+DefTreeJs requires Node.js to use it
 ```sh
 npm i deftreejs
 ```
